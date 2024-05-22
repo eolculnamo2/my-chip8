@@ -1,7 +1,8 @@
 [package]
-name = "chip8"
+name = "ui"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-ui = { path = "./ui" }
+crossterm = "0.27.0"
+ratatui = "0.26.3"
