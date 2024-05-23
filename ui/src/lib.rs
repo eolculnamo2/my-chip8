@@ -15,7 +15,7 @@ pub fn start_ui() -> Result<()> {
     let mut terminal = Terminal::new(CrosstermBackend::new(stdout()))?;
     terminal.clear()?;
 
-    // may replace this with 60hz to match the oldschool versions
+    // may replace this with 60hz timer
     loop {
         terminal.draw(|frame| {
             let area = frame.size();

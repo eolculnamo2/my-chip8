@@ -6,11 +6,16 @@ type MemoryArray = [u8; 4096];
 type DisplayArray = [u8; 64 * 32];
 
 pub struct System {
+    pub is_loaded: bool,
     pub fonts: FontArray,
     pub memory: MemoryArray,
     pub display: DisplayArray,
+    pub program_counter: u8,
+    pub index: u16,
+    pub stack: Vec<u8>,
 }
 
+const START_MEMORY_INDEX: usize = 0x200;
 impl System {
     fn init_memory(fonts: &FontArray) -> MemoryArray {
         let mut memory = [0; 4096];
@@ -24,14 +29,40 @@ impl System {
         memory
     }
 
+    pub fn load_program(&mut self, rom_data: Vec<u8>) {
+        if self.is_loaded {
+            todo!("Todo clear out old program");
+        }
+
+        let mut index = START_MEMORY_INDEX;
+        rom_data.iter().for_each(|item| {
+            if self.memory.get(index).is_none() {
+                eprintln!("Program too large. Out of memory!");
+            }
+            self.memory[index] = *item;
+            index += 1;
+        });
+
+        let program_size = index - START_MEMORY_INDEX;
+        assert!(
+            rom_data.len() == program_size,
+            "input is expected to equal number of instuctions loaded into memory"
+        );
+        println!("Program loaded with {program_size} instructions",);
+    }
+
     pub fn new() -> Self {
         let fonts = init_fonts();
         let memory = Self::init_memory(&fonts);
 
         Self {
+            is_loaded: false,
             fonts,
             memory,
             display: [0; 64 * 32],
+            program_counter: 0,
+            index: 0,
+            stack: Vec::new(),
         }
     }
 }
