@@ -1,4 +1,5 @@
 use crate::fonts::{get_fonts_by_char, init_fonts, FontArray};
+use crate::read_instructions::read_instruction;
 
 type MemoryArray = [u8; 4096];
 
@@ -36,10 +37,11 @@ impl System {
 
         let mut index = START_MEMORY_INDEX;
         rom_data.iter().for_each(|item| {
-            if self.memory.get(index).is_none() {
-                eprintln!("Program too large. Out of memory!");
-            }
-            self.memory[index] = *item;
+            read_instruction(item);
+            *self
+                .memory
+                .get_mut(index)
+                .expect("Program too large. Out of memory!") = *item;
             index += 1;
         });
 

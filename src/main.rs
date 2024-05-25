@@ -1,4 +1,5 @@
 mod fonts;
+mod read_instructions;
 mod rom;
 mod system;
 
