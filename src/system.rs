@@ -1,5 +1,5 @@
 use crate::fonts::{get_fonts_by_char, init_fonts, FontArray};
-use crate::read_instructions::read_instruction;
+use crate::read_instructions::{create_nibble_pairs, read_instruction};
 
 type MemoryArray = [u8; 4096];
 
@@ -35,22 +35,27 @@ impl System {
             todo!("Todo clear out old program");
         }
 
-        let mut index = START_MEMORY_INDEX;
-        rom_data.iter().for_each(|item| {
-            read_instruction(item);
-            *self
-                .memory
-                .get_mut(index)
-                .expect("Program too large. Out of memory!") = *item;
-            index += 1;
+        let pairs = create_nibble_pairs(rom_data);
+        pairs.iter().for_each(|pair| {
+            read_instruction(pair);
         });
 
-        let program_size = index - START_MEMORY_INDEX;
-        assert!(
-            rom_data.len() == program_size,
-            "input is expected to equal number of instuctions loaded into memory"
-        );
-        println!("Program loaded with {program_size} instructions",);
+        // let mut index = START_MEMORY_INDEX;
+        // rom_data.iter().for_each(|item| {
+        //     read_instruction(item);
+        //     *self
+        //         .memory
+        //         .get_mut(index)
+        //         .expect("Program too large. Out of memory!") = *item;
+        //     index += 1;
+        // });
+        //
+        // let program_size = index - START_MEMORY_INDEX;
+        // assert!(
+        //     rom_data.len() == program_size,
+        //     "input is expected to equal number of instuctions loaded into memory"
+        // );
+        // println!("Program loaded with {program_size} instructions",);
     }
 
     pub fn new() -> Self {
